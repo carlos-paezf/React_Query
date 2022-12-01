@@ -22,3 +22,7 @@ Extensiones recomendadas sobre React:
 - Simple React Snippets
 - Auto Close Tag
 - TypeScript Importer
+
+## Documentación
+
+1. [Sección 02. ¿Por qué React Query?](02-Por_que_React_Query/README.md)
