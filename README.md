@@ -26,3 +26,4 @@ Extensiones recomendadas sobre React:
 ## Documentación
 
 1. [Sección 02. ¿Por qué React Query?](02-Por_que_React_Query/README.md)
+2. [Sección 03. React Query - IssuesApp](03-React_Query_IssuesApp/README.md)
