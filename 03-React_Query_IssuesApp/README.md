@@ -80,3 +80,82 @@ ReactDOM.createRoot( document.getElementById( 'root' ) as HTMLElement ).render(
 ```
 
 Los demás componentes tienen contenido de manera static, la idea es que más adelante mediante React-Query podamos hacer más dinámica la aplicación.
+
+## Instalación - React Query
+
+Vamos a instalar TanStack React-Query con el siguiente comando:
+
+```txt
+pnpm i @tanstack/react-query
+```
+
+También vamos a instalar las herramientas de desarrollo que nos permitirá probar nuestra aplicación en modo de desarrollo:
+
+```txt
+pnpm i @tanstack/react-query-devtools
+```
+
+Una vez tengamos las instalaciones, creamos nuestra instancia cliente y la proveemos a toda la aplicación desde el archivo `main.tsx`:
+
+```tsx
+...
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+
+const queryClient = new QueryClient()
+
+
+ReactDOM.createRoot( document.getElementById( 'root' ) as HTMLElement ).render(
+    <React.StrictMode>
+        <QueryClientProvider client={ queryClient }>
+            <RouterProvider router={ router } />
+        </QueryClientProvider>
+    </React.StrictMode>
+)
+```
+
+Para hacer uso de las devtools, importamos el componente desde su paquete, y lo incluimos dentro del proveedor del cliente de React Query, de esta manera, podremos hacer seguimiento a la funcionalidad de nuestro cliente en la aplicación:
+
+```tsx
+...
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
+...
+ReactDOM.createRoot( document.getElementById( 'root' ) as HTMLElement ).render(
+    <React.StrictMode>
+        <QueryClientProvider client={ queryClient }>
+            <RouterProvider router={ router } />
+            <ReactQueryDevtools />
+        </QueryClientProvider>
+    </React.StrictMode>
+)
+```
+
+Sabemos que todo va bien, si en la parte inferior izquierda de la aplicación aparece el logo de React Query, y al momento de dar click, se expande un componente de seguimiento de las peticiones.
+
+## Label Issues - Facebook/React
+
+Para esta sección necesitamos la documentación de [Labels API - Github](https://docs.github.com/en/rest/issues/labels?apiVersion=2022-11-28), y además vamos a usar las issues del repositorio [facebook/react](https://github.com/facebook/react/issues).
+
+Comenzamos a crear de manera dinámica los labels en el componente `<LabelPicker />`, y para ello iniciamos creando una query de manera empírica. Creamos un fetcher que se encargue de cargar los labels de repositorio de react, y luego dentro del componente usamos el hook `useQuery`, mediante el cual designamos el nombre del espacio en cache, y pasamos por referencia el fetcher:
+
+```tsx
+import { useQuery } from "@tanstack/react-query"
+
+
+const fetcherGetLabels = async () => {
+    const res = await fetch( 'https://api.github.com/repos/facebook/react/labels' )
+    return await res.json()
+}
+
+
+export const LabelPicker = () => {
+    const labelsQuery = useQuery(
+        [ 'labels' ],
+        fetcherGetLabels
+    )
+
+    return (...)
+}
+```
+
