@@ -220,3 +220,76 @@ export const LabelPicker = () => {
     return (...)
 }
 ```
+
+## useLabels + useQuery
+
+Procedemos a crear un hook personalizado para controlar la petición que se hace mediante `useQuery`. En este hook almacenamos también el fetcher para la petición:
+
+```tsx
+import { useQuery } from "@tanstack/react-query"
+import { githubApiClient } from "../../api/githubApi"
+import { LabelType } from "../types/label"
+
+
+const fetcherGetLabels = async (): Promise<LabelType[]> => {
+    const { data } = await githubApiClient.get<LabelType[]>( '/labels' )
+    return data
+}
+
+
+export const useLabels = () => {
+    const labelsQuery = useQuery(
+        [ 'labels' ],
+        fetcherGetLabels,
+        {
+            refetchOnWindowFocus: false
+        }
+    )
+
+    return { labelsQuery }
+}
+```
+
+Dentro del componente `<LabelPicker />`, llamamos nuestro hook y comenzamos a usar algunas de sus propiedades:
+
+```tsx
+import { useLabels } from '../hooks/useLabels'
+
+
+export const LabelPicker = () => {
+    const { labelsQuery: { data, isLoading } } = useLabels()
+
+    if ( isLoading ) return <h1>Loading...</h1>
+
+    return (
+        <>
+            {
+                data?.map( ( { id, color, name } ) => (
+                    <span key={ id } className="badge rounded-pill m-1 label-picker"
+                        style={ { border: `1px solid #${ color } `, color: `#${ color }` } }>
+                        { name }
+                    </span>
+                ) )
+            }
+
+        </>
+    )
+}
+```
+
+Vamos a retrasar un poco la petición creando un helper con un setTimeout:
+
+```ts
+export const sleep = ( seconds: number = 1 ): Promise<boolean> => {
+    return new Promise<boolean>( ( resolve ) =>
+        setTimeout( () => resolve( true ), seconds * 1000 ) )
+}
+```
+
+```tsx
+const fetcherGetLabels = async (): Promise<LabelType[]> => {
+    await sleep( 2 )
+    const { data } = await githubApiClient.get<LabelType[]>( '/labels' )
+    return data
+}
+```
