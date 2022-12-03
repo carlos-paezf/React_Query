@@ -159,3 +159,64 @@ export const LabelPicker = () => {
 }
 ```
 
+## Axios y Tipo de dato LabelType
+
+Vamos a instalar Axios con el siguiente comando:
+
+```txt
+pnpm i axios
+```
+
+Posteriormente creamos una carpeta llamada `api`, y dentro un archivo con la configuración para la conexión con la API de GitHub.
+
+```ts
+import axios from "axios"
+
+
+export const githubApiClient = axios.create( {
+    baseURL: 'https://api.github.com/repos/facebook/react',
+    headers: {}
+} )
+```
+
+Procedemos a crear un Type para definir el tipo de respuesta de la petición:
+
+```ts
+export type LabelType = {
+    id: number
+    node_id: string
+    url: string
+    name: string
+    color: string
+    default: boolean
+    description?: string
+}
+```
+
+Volvemos a nuestro componente de `<LabelPicker />` y reemplazamos nuestra petición con la solicitud get al cliente de axios, y tipando la respuesta de la petición:
+
+```tsx
+import { githubApiClient } from "../../api/githubApi"
+import { LabelType } from "../types/label"
+
+
+const fetcherGetLabels = async (): Promise<LabelType[]> => {
+    const { data } = await githubApiClient.get<LabelType[]>( '/labels' )
+    return data
+}
+```
+
+Ahora, vamos a reducir la cantidad de peticiones que se realizan a la api, configurando a react-query para que no haga fetch cuando la aplicación vuelva a ser enfocada por el cliente:
+
+```tsx
+export const LabelPicker = () => {
+    const labelsQuery = useQuery(
+        ...,
+        {
+            refetchOnWindowFocus: false
+        }
+    )
+
+    return (...)
+}
+```
