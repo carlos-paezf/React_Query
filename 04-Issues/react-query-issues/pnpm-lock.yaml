@@ -4,11 +4,13 @@ specifiers:
   '@popperjs/core': ^2.11.6
   '@tanstack/react-query': ^4.19.0
   '@tanstack/react-query-devtools': ^4.19.0
+  '@types/node': ^18.11.13
   '@types/react': ^18.0.24
   '@types/react-dom': ^18.0.8
   '@vitejs/plugin-react': ^2.2.0
   axios: ^1.2.0
   bootstrap: 5.2.3
+  dotenv: ^16.0.3
   react: ^18.2.0
   react-dom: ^18.2.0
   react-icons: ^4.7.1
@@ -23,6 +25,7 @@ dependencies:
   '@tanstack/react-query-devtools': 4.19.0_budcsmmktl2xfbndofa5sinodm
   axios: 1.2.0
   bootstrap: 5.2.3_@popperjs+core@2.11.6
+  dotenv: 16.0.3
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   react-icons: 4.7.1_react@18.2.0
@@ -30,11 +33,12 @@ dependencies:
   react-router-dom: 6.4.4_biqbaboplfbrettd7655fr4n2y
 
 devDependencies:
+  '@types/node': 18.11.13
   '@types/react': 18.0.25
   '@types/react-dom': 18.0.9
   '@vitejs/plugin-react': 2.2.0_vite@3.2.4
   typescript: 4.9.3
-  vite: 3.2.4
+  vite: 3.2.4_@types+node@18.11.13
 
 packages:
 
@@ -436,6 +440,10 @@ packages:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
     dev: false
 
+  /@types/node/18.11.13:
+    resolution: {integrity: sha512-IASpMGVcWpUsx5xBOrxMj7Bl8lqfuTY7FKAnPmu5cHkfQVWF8GulWS1jbRqA934qZL35xh5xN/+Xe/i26Bod4w==}
+    dev: true
+
   /@types/prop-types/15.7.5:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
 
@@ -472,7 +480,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.19.6_@babel+core@7.20.5
       magic-string: 0.26.7
       react-refresh: 0.14.0
-      vite: 3.2.4
+      vite: 3.2.4_@types+node@18.11.13
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -603,6 +611,11 @@ packages:
   /diff/5.1.0:
     resolution: {integrity: sha512-D+mk+qE8VC/PAUrlAU34N+VfXev0ghe5ywmpqrawphmVZc1bEfn56uo9qpyGp1p4xpzOHkSW4ztBd6L7Xx4ACw==}
     engines: {node: '>=0.3.1'}
+    dev: false
+
+  /dotenv/16.0.3:
+    resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
+    engines: {node: '>=12'}
     dev: false
 
   /electron-to-chromium/1.4.284:
@@ -1540,7 +1553,7 @@ packages:
       vfile-message: 3.1.3
     dev: false
 
-  /vite/3.2.4:
+  /vite/3.2.4_@types+node@18.11.13:
     resolution: {integrity: sha512-Z2X6SRAffOUYTa+sLy3NQ7nlHFU100xwanq1WDwqaiFiCe+25zdxP1TfCS5ojPV2oDDcXudHIoPnI1Z/66B7Yw==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -1565,6 +1578,7 @@ packages:
       terser:
         optional: true
     dependencies:
+      '@types/node': 18.11.13
       esbuild: 0.15.16
       postcss: 8.4.19
       resolve: 1.22.1
