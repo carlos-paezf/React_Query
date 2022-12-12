@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { githubApiClient } from "../../api/githubApi"
+import { placeholderDataMock } from "../../helpers/mocks/placeholderDataMock"
 import { sleep } from "../../helpers/sleep"
 import { LabelType } from "../types/label"
 
@@ -17,7 +18,8 @@ export const useLabels = () => {
         fetcherGetLabels,
         {
             refetchOnWindowFocus: false,
-            staleTime: 1000 * 60 * 60
+            staleTime: 1000 * 60 * 60,
+            placeholderData: placeholderDataMock
         }
     )
 
