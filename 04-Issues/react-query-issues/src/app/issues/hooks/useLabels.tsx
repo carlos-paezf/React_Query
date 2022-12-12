@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { githubApiClient } from "../../api/githubApi"
 import { placeholderDataMock } from "../../helpers/mocks/placeholderDataMock"
 import { sleep } from "../../helpers/sleep"
-import { LabelType } from "../types/label"
+import type { LabelType } from "../types"
 
 
 const fetcherGetLabels = async (): Promise<LabelType[]> => {

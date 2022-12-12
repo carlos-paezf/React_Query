@@ -30,3 +30,39 @@ const fetcherGetLabels = async (): Promise<LabelType[]> => {
     ...
 }
 ```
+
+## Cargar Issues de GitHub
+
+Vamos a cargar las issues mediante un [endpoint](https://api.github.com/repos/facebook/react/issues). Lo primero será crear un custom hook similar al creado para los labels  (la interfaz para el tipo fue creada a partir de la respuesta que se generó cuando se hizo una petición al endpoint, luego mediante la extensión **Paste JSON as Code** se simplifico el trabajo de creación de interfaces):
+
+```tsx
+import { useQuery } from "@tanstack/react-query"
+import { githubApiClient } from "../../api/githubApi"
+import type { IssueType } from "../types"
+
+
+const fetcherGetIssues = async (): Promise<IssueType[]> => {
+    const { data } = await githubApiClient.get<IssueType[]>( '/issues' )
+    return data
+}
+
+
+export const useIssues = () => {
+    const issuesQuery = useQuery(
+        [ 'issues' ],
+        fetcherGetIssues
+    )
+
+    return { issuesQuery }
+}
+```
+
+Este hook que acabamos de crear lo vamos a usar dentro del componente `<ListView />` con el objetivo de temporalmente verlo en dicha página en la sección de React Query:
+
+```tsx
+export const ListView = () => {
+    ...
+    const { issuesQuery } = useIssues()
+    ...
+}
+```
