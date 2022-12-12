@@ -394,3 +394,69 @@ export const useLabels = () => {
 ```
 
 La propiedad `initialData` es similar a `placeholderData`, pero la primera se guarda en cache, por lo que si tenemos configurado que las peticiones automáticas se realicen en un determinado tiempo, entonces la data definida como inicial, sera almacenada en el cache y no se refrescara hasta que se haga una nueva solicitud.
+
+## Seleccionar etiquetas
+
+Esta sección no pertenece al estudio de React Query, es más interacción del usuario con la aplicación. Añadimos la funcionalidad de que se puedan ver que tags selecciona el usuario para un posible futuro filtro, para ello añadimos las siguientes líneas de código en el componente de `<ListView />`:
+
+```tsx
+export const ListView = () => {
+    const [ selectedLabels, setSelectedLabels ] = useState<string[]>( [] )
+
+    const onLabelChange = ( labelName: string ) => {
+        ( selectedLabels.includes( labelName ) )
+            ? setSelectedLabels( selectedLabels.filter( ( e ) => e !== labelName ) )
+            : setSelectedLabels( [ labelName, ...selectedLabels ] )
+    }
+
+    return (
+        <div className="row mt-5">
+            ...
+            <div className="col-4">
+                <LabelPicker
+                    selectedLabels={ selectedLabels }
+                    onLabelChange={ ( labelName ) => { onLabelChange( labelName ) } }
+                />
+            </div>
+        </div>
+    )
+}
+```
+
+Luego, en el componente de `<LabelPicker />` añadimos lo siguiente:
+
+```tsx
+type Props = {
+    selectedLabels: string[]
+    onLabelChange: ( labelName: string ) => void
+}
+
+
+export const LabelPicker: FC<Props> = ( { selectedLabels, onLabelChange } ) => {
+    ...
+    return (
+        <>
+            {
+                data?.map( ( { id, color, name } ) => (
+                    <span ...
+                        className={ `... ${ selectedLabels.includes( name ) && 'label-active' }` }
+                        ...
+                        onClick={ () => onLabelChange( name ) }
+                    >
+                        { name }
+                    </span>
+                ) )
+            }
+
+        </>
+    )
+}
+```
+
+Y por último definimos el estilo para los labels activos, dentro del archivo `styles.css`:
+
+```css
+.label-active {
+    background-color: rgba(155, 155, 155, 0.5);
+}
+```
