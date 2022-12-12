@@ -293,3 +293,24 @@ const fetcherGetLabels = async (): Promise<LabelType[]> => {
     return data
 }
 ```
+
+## Fresh - Fetching - Paused - Stale - Inactive
+
+En el hook del React Query podemos observar los estados del titulo de esta sección. **Fresh** hace referencia a que la data es reciente, es la última información que se ha consultado. **Fetching** se activa cada que se esta trayendo la información. **Paused** permite poner pausa a la petición que se está haciendo, aprovechando que estamos trabajando con promesas. **Stale** es una forma de decir que la data es "vieja" u "obsoleta". **Inactive** es el estado que tiene la información cuando la data no está siendo utilizada en la aplicación. Cuando se hace una petición, la misma cae un estado de *fetching*, pero posteriormente, aunque por un breve tiempo, entra en un estado de *fresh*, y por último al almacenar la información en cache, entonces la información pasa a tener el estado de *stale*.
+
+Podemos configurar que la data se mantenga "fresca" por un tiempo determinado, con el objetivo de evitar un bombardeo de peticiones al endpoint en particular por acciones como enfocar la ventana. Para nuestro caso de las peticiones a GitHub, establecemos que las peticiones se realicen cada hora si no hay solicitud de refrescar por parte del usuario. Esto nos permite que la información se mantenga en el estado de *fetch* y no pase al estado de *stale*, sino dentro de 1 hora.
+
+```tsx
+export const useLabels = () => {
+    const labelsQuery = useQuery(
+        [ 'labels' ],
+        fetcherGetLabels,
+        {
+            refetchOnWindowFocus: false,
+            staleTime: 1000 * 60 * 60
+        }
+    )
+
+    return { labelsQuery }
+}
+```
