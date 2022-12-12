@@ -314,3 +314,46 @@ export const useLabels = () => {
     return { labelsQuery }
 }
 ```
+
+## Icon Loader
+
+Vamos a crear un nuevo componente que contenga un icono de carga que reemplace la palabra `Loading`, para ello creamos un nuevo componente llamado `LoadingIcon`:
+
+```tsx
+import { FaSpinner } from 'react-icons/fa'
+
+export const LoadingIcon = () => <FaSpinner className='loader' />
+```
+
+La clase CSS la definimos en `styles.css`:
+
+```css
+.loader {
+    animation: spin-animation 1.5s infinite linear;
+    display: block;
+}
+
+
+@keyframes spin-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+```
+
+Lo que resta es llamar este componente en los lugares donde mostramos la carga:
+
+```tsx
+import { LoadingIcon } from '../../shared/LoadingIcon'
+
+
+export const LabelPicker = () => {
+    ...
+    if ( isLoading ) return <LoadingIcon />
+    ...
+}
+```
