@@ -7,7 +7,11 @@ import { LabelType } from "../types/label"
 
 const fetcherGetLabels = async (): Promise<LabelType[]> => {
     await sleep( 2 )
-    const { data } = await githubApiClient.get<LabelType[]>( '/labels' )
+    const { data } = await githubApiClient.get<LabelType[]>( '/labels', {
+        headers: {
+            Authorization: null
+        }
+    } )
     return data
 }
 
