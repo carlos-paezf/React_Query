@@ -1,19 +1,20 @@
 import { FC } from "react"
 import ReactMarkdown from 'react-markdown'
+import { IssueType } from "../types"
 
 
 type Props = {
-    body: string
+    issue: IssueType
 }
 
 
-export const IssueComment: FC<Props> = ( { body } ) => {
+export const IssueComment: FC<Props> = ( { issue: { user, body } } ) => {
     return (
         <div className="col-12">
             <div className="card border-white mt-2">
                 <div className="card-header bg-dark">
-                    <img src="https://avatars.githubusercontent.com/u/55883267?s=400&u=cd06f3bda51dc38042d35a7e9db57a0f55e5e004&v=4" alt="User Avatar" className="avatar" />
-                    <span className="mx-2">Ferrer commented</span>
+                    <img src={ user.avatar_url } alt="User Avatar" className="avatar" />
+                    <span className="mx-2">{ user.login } commented</span>
                 </div>
 
                 <div className="card-body text-dark">

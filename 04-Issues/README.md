@@ -221,3 +221,66 @@ export const IssueView = () => {
     ...
 }
 ```
+
+## Información del Issue
+
+Dentro de la vista principal del Issue vamos a cargar la información referente al mismo. Lo primero será definir si se está cargando la data, en cuyo caso se debe mostrar el icono de carga, posteriormente evaluamos que si no hay data, se debe navegar a la página anterior (si se ingresa mál en número de la issue, React Query hará una serie de peticiones, pero si persiste el error, efectuará lo que definamos, en este caso ir atrás). El primero comentario del issue será la información del mismo, por lo que le enviamos la información obtenida de la consulta al primer `<IssueComment />`
+
+```tsx
+import { Link, Navigate, useParams } from "react-router-dom"
+import { LoadingIcon } from "../../shared/LoadingIcon"
+import { IssueComment } from '../components'
+import { useIssue } from "../hooks"
+
+
+export const IssueView = () => {
+    const { id = '0' } = useParams()
+
+    const { issueQuery: { isLoading, data } } = useIssue( Number( id ) )
+
+    if ( isLoading ) return <LoadingIcon />
+
+    if ( !data ) return <Navigate to="./issues/list" />
+
+    return (
+        <div className="row mb-5">
+            <div className="col-12 mb-3">
+                <Link to="./issues/list">Go Back</Link>
+            </div>
+
+            <IssueComment issue={ data } />
+        </div>
+    )
+}
+```
+
+El componente `<IssueComment />` se encarga de renderizar la información referente al issue o a un comentario.
+
+```tsx
+import { FC } from "react"
+import ReactMarkdown from 'react-markdown'
+import { IssueType } from "../types"
+
+type Props = {
+    issue: IssueType
+}
+
+export const IssueComment: FC<Props> = ( { issue: { user, body } } ) => {
+    return (
+        <div className="col-12">
+            <div className="card border-white mt-2">
+                <div className="card-header bg-dark">
+                    <img src={ user.avatar_url } alt="User Avatar" className="avatar" />
+                    <span className="mx-2">{ user.login } commented</span>
+                </div>
+
+                <div className="card-body text-dark">
+                    <ReactMarkdown>{ body }</ReactMarkdown>
+                </div>
+            </div>
+        </div>
+    )
+}
+```
+
+React Query nos permite almacenar la información de las consultas en cache, logrando así que sea más rápida la consulta de los elementos y en caso de actualización, el usuario tenga la última información que se había mostrado mientras aplica el fetch.
