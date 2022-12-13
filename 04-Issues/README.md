@@ -161,3 +161,63 @@ export const IssueItem: FC<Props> = ( {
     )
 }
 ```
+
+## Navegar y cargar issue por número
+
+Vamos a implementar una nueva pantalla que cargue la información de un issue de manera independiente. Para implementar esta funcionalidad vamos a hacer uso del hook `useNavigate` de react-router-dom:
+
+```tsx
+...
+import { useNavigate } from 'react-router-dom'
+
+export const IssueItem: FC<Props> = ( { issue: { number, ... } } ) => {
+    const navigate = useNavigate()
+
+    return (
+        <div ... onClick={ () => navigate( `/issues/issue/${ number }` ) }>
+            ...
+        </div>
+    )
+}
+```
+
+Al momento que nosotros presionamos la tarjeta, vamos a navegar a una nueva pantalla, pero a su vez podemos observar que React Query nos marca como inactiva la información que tenemos almacenada en la cache, puesto que no está siendo usada en la generación de los componentes de la nueva vista. Luego de 5 minutos de inactividad eliminará la información, liberando memoria.
+
+Dentro de nuestro componente de `<IssueView />` hacemos uso del parámetro que se ingresa desde la url para poder hacer una búsqueda mediante la API. Pero, primero necesitamos crear un customHook que nos permita hacer la petición, en este caso tenemos una pequeña diferencia al momento de llamar el fetcher ya que este recibe un valor por parámetro, por lo tanto ya no podemos invocar la función por referencia:
+
+```tsx
+import { useQuery } from "@tanstack/react-query"
+import { IssueType } from "../types"
+import { githubApiClient } from '../../api/githubApi'
+import { sleep } from "../../helpers/sleep"
+
+const fetcherGetIssue = async ( issueNumber: number ): Promise<IssueType> => {
+    await sleep( 2 )
+    const { data } = await githubApiClient.get<IssueType>( `/issues/${ issueNumber }` )
+    return data
+}
+
+export const useIssue = ( issueNumber: number ) => {
+    const issueQuery = useQuery(
+        [ `issue`, issueNumber ],
+        () => fetcherGetIssue( issueNumber )
+    )
+
+    return { issueQuery }
+}
+```
+
+Regresamos al componente de la vista principal de la incidencia y obtenemos el parámetro de la url para enviarlo a nuestro custom hook:
+
+```tsx
+import { ..., useParams } from "react-router-dom"
+import { useIssue } from "../hooks"
+
+
+export const IssueView = () => {
+    const { id = '0' } = useParams()
+
+    const { issueQuery } = useIssue( Number( id ) )
+    ...
+}
+```
