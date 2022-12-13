@@ -5,8 +5,15 @@ import { sleep } from "../../helpers/sleep"
 
 
 const fetcherGetIssue = async ( issueNumber: number ): Promise<IssueType> => {
-    await sleep( 2 )
+    await sleep( 1 )
     const { data } = await githubApiClient.get<IssueType>( `/issues/${ issueNumber }` )
+    return data
+}
+
+
+const fetcherGetIssueComments = async ( issueNumber: number ): Promise<IssueType[]> => {
+    await sleep( 1 )
+    const { data } = await githubApiClient.get<IssueType[]>( `/issues/${ issueNumber }/comments` )
     return data
 }
 
@@ -17,5 +24,13 @@ export const useIssue = ( issueNumber: number ) => {
         () => fetcherGetIssue( issueNumber )
     )
 
-    return { issueQuery }
+    const issueCommentsQuery = useQuery(
+        [ 'issue', issueNumber, 'comments' ],
+        () => fetcherGetIssueComments( issueQuery.data?.number! ),
+        {
+            enabled: !!issueQuery.data
+        }
+    )
+
+    return { issueQuery, issueCommentsQuery }
 }

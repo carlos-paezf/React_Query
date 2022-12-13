@@ -7,7 +7,7 @@ import { useIssue } from "../hooks"
 export const IssueView = () => {
     const { id = '0' } = useParams()
 
-    const { issueQuery: { isLoading, data } } = useIssue( Number( id ) )
+    const { issueQuery: { isLoading, data }, issueCommentsQuery } = useIssue( Number( id ) )
 
     if ( isLoading ) return <LoadingIcon />
 
@@ -19,12 +19,15 @@ export const IssueView = () => {
                 <Link to="./issues/list">Go Back</Link>
             </div>
 
-            {/* Primer Comentario */ }
             <IssueComment issue={ data } />
 
-            {/* Comentarios de otros */ }
-            {/* <IssueComment body={ comment2 } /> */ }
-            {/* <IssueComment body={ comment3 } /> */ }
+            { issueCommentsQuery.isLoading && <LoadingIcon /> }
+
+            {
+                issueCommentsQuery.data?.map(
+                    issue => <IssueComment issue={ issue } key={ issue.id } />
+                )
+            }
         </div>
     )
 }

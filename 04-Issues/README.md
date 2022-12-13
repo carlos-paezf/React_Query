@@ -284,3 +284,76 @@ export const IssueComment: FC<Props> = ( { issue: { user, body } } ) => {
 ```
 
 React Query nos permite almacenar la información de las consultas en cache, logrando así que sea más rápida la consulta de los elementos y en caso de actualización, el usuario tenga la última información que se había mostrado mientras aplica el fetch.
+
+## Cargar comentarios del Issue
+
+Como queremos traer los comentarios de una issue necesitamos hacer una query que traiga dichos comentarios, por tal motivo creamos lo siguiente dentro del mismo hook de `useIssue`:
+
+```tsx
+...
+const fetcherGetIssueComments = async ( issueNumber: number ): Promise<IssueType[]> => {
+    await sleep( 1 )
+    const { data } = await githubApiClient.get<IssueType[]>( `/issues/${ issueNumber }/comments` )
+    return data
+}
+
+
+export const useIssue = ( issueNumber: number ) => {
+    ...
+    const issueCommentsQuery = useQuery(
+        [ 'issue', issueNumber, 'comments' ],
+        () => fetcherGetIssueComments( issueNumber )
+    )
+
+    return { ..., issueCommentsQuery }
+}
+```
+
+Luego solo resta llamar la query dentro de la vista de la query para renderizar uno a uno los comentarios:
+
+```tsx
+...
+export const IssueView = () => {
+    ...
+    const { ..., issueCommentsQuery } = useIssue( Number( id ) )
+    ...
+    return (
+        <div className="row mb-5">
+            ...
+            { issueCommentsQuery.data?.map( issue => <IssueComment issue={ issue } key={ issue.id } /> ) }
+        </div>
+    )
+}
+```
+
+Podemos determinar en que momento se ejecuta la query de los comentarios. En nuestro caso queremos que se efectué cuando la data de la issue query sea diferente a `undefined`, además de que determinamos que el fetcher haga uso del número que trae la data de la consulta de la incidencia.
+
+```tsx
+export const useIssue = ( issueNumber: number ) => {
+    ...
+    const issueCommentsQuery = useQuery(
+        [ 'issue', issueNumber, 'comments' ],
+        () => fetcherGetIssueComments( issueQuery.data?.number! ),
+        {
+            enabled: !!issueQuery.data
+        }
+    )
+
+    return { ..., issueCommentsQuery }
+}
+```
+
+Como acabamos de hacer dependiente una consulta de la otra, vamos a implementar la retroalimentación visual con el icono y animación de carga para el caso de los comentarios:
+
+```tsx
+export const IssueView = () => {
+    ...
+    return (
+        <div className="row mb-5">
+            ...
+            { issueCommentsQuery.isLoading && <LoadingIcon /> }
+            ...
+        </div>
+    )
+}
+```
