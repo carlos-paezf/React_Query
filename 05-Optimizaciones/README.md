@@ -63,3 +63,33 @@ export const IssueItem: FC<Props> = ( { issue: { ..., number } } ) => {
     ...
 }
 ```
+
+## QueryClient - setQueryData
+
+Algo que podemos hacer al momento de tener un limite de consultas en una API, es hacer un preset en vez de un prefetch. Básicamente aprovechamos que cuando hacemos una consulta con el listado de issues estamos trayendo la información necesaria para cada una de las issues, por lo tanto no requerimos hacer otra consulta a la API, sino que hacemos uso de la data que se envía por props al componente `<IssueItem />` y la asignamos al cache respectivo del issue, y con ello logramos que al entrar a la vista principal del issue ya se pueda observar la información sin hacer un fetch, solo quedaría traer los comentarios.
+
+Para asignar la data al cache y hacer el preset escribimos el siguiente código:
+
+```tsx
+...
+export const IssueItem: FC<Props> = ( { issue } ) => {
+    const { state, title, number, user, comments } = issue
+    ...
+    const queryClient = useQueryClient()
+    ...
+    const preSetData = () => {
+        queryClient.setQueryData(
+            [ "issue", number ],
+            issue
+        )
+    }
+
+    return (
+        <div ... onMouseEnter={ preSetData }>
+            ...
+        </div>
+    )
+}
+```
+
+Cuando ingresamos a la aplicación y observamos la interacción con la red, podemos observar que se realiza una consulta para obtener todas las issues, y no vuelve a hacer peticiones sino hasta que se ingresa a una issue especifica y se cargan sus comentarios.
