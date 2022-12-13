@@ -66,3 +66,98 @@ export const ListView = () => {
     ...
 }
 ```
+
+## Mostrar issues en pantalla
+
+Vamos a usar las propiedades `isLoading` y `data` de la query que definimos para las issues, esto con el fin de mostrar el icono de carga mientras se trae la información, y enviamos la data que se consulta mediante props.
+
+```tsx
+...
+import { useIssues } from '../hooks'
+
+
+export const ListView = () => {
+    ...
+    const { issuesQuery: { isLoading, data } } = useIssues()
+    ...
+    return (
+        <div className="row mt-5">
+            <div className="col-8">
+                {
+                    isLoading
+                        ? <LoadingIcon />
+                        : <IssueList issues={ data || [] } />
+                }
+            </div>
+
+            ...
+        </div>
+    )
+}
+```
+
+Claramente debemos definir los props dentro del componente de la lista de issues:
+
+```tsx
+import { FC } from "react"
+import type { IssueType } from "../types"
+
+type Props = {
+    issues: IssueType[]
+}
+
+export const IssueList: FC<Props> = ( { issues } ) => {
+    return (
+        <div className="card border-white">
+            ...
+
+            <div className="card-body text-dark">
+                {
+                    issues.map( issue => <IssueItem key={ issue.id } /> )
+                }
+            </div>
+        </div>
+    )
+}
+```
+
+Lo siguiente será personalizar cada tarjeta de Issues a partir de la información que se recorre desde el componente anterior:
+
+```tsx
+import { FC } from 'react'
+import { FiCheckCircle, FiInfo, FiMessageSquare } from 'react-icons/fi'
+import { IssueType, State } from '../types'
+
+type Props = {
+    issue: IssueType
+}
+
+export const IssueItem: FC<Props> = ( {
+    issue: {
+        state, title, number, user, comments
+    }
+} ) => {
+    return (
+        <div className="card mb-2 issue">
+            <div className="card-body d-flex align-items-center">
+                {
+                    state === State.Open
+                        ? <FiInfo size={ 30 } color="red" />
+                        : <FiCheckCircle size={ 30 } color="green" />
+                }
+
+                <div className="d-flex flex-column flex-fill px-2">
+                    <span>{ title }</span>
+                    <span className="issue-subinfo">#{ number } opened 2 days ago by <span className="fw-bold">{ user.login }</span></span>
+                </div>
+
+                <div className="d-flex align-items-center">
+                    <img src={ user.avatar_url } alt="User Avatar" className="avatar" />
+                    <span className="px-2">{ comments }</span>
+                    <FiMessageSquare />
+                </div>
+            </div>
+        </div>
+    )
+}
+```
