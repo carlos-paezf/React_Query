@@ -1,5 +1,5 @@
 import { sleep } from "../../helpers/sleep"
-import { IssueType } from "../../issues/types"
+import { IssueType, StateType } from "../../issues/types"
 import { githubApiClient } from "../githubApi"
 
 
@@ -7,8 +7,13 @@ import { githubApiClient } from "../githubApi"
  * It returns a promise that resolves to an array of issues
  * @returns An array of IssueType objects.
  */
-export const fetcherGetIssues = async (): Promise<IssueType[]> => {
+export const fetcherGetIssues = async ( labels: string[], state?: StateType ): Promise<IssueType[]> => {
     await sleep( 1 )
-    const { data } = await githubApiClient.get<IssueType[]>( '/issues' )
+
+    const params = new URLSearchParams()
+
+    if ( state ) params.append( 'state', state )
+
+    const { data } = await githubApiClient.get<IssueType[]>( '/issues', { params } )
     return data
 }

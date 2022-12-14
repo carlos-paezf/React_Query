@@ -75,3 +75,53 @@ export const ListView = () => {
     )
 }
 ```
+
+## Filtrar Issues - Open y Closed
+
+Debemos enviar el estado y los labels a nuestro custom hook `useIssues` con el fin de realizar la consulta a la api. Lo primero será modificar nuestro hook para que reciba las props, a partir de las cuales usamos sus propiedades para ampliar el nombre del cache procurando que sin importar el orden que se envíen las propiedades se pueda ubicar el cache designado y no tenga que crear otro espacio en cache, para ello definimos los elementos dentro del nombre como un objeto. También debemos enviar los elementos que recibimos como argumentos a la función fetcher:
+
+```tsx
+type Props = {
+    labels: string[]
+    state?: StateType
+}
+
+export const useIssues = ( { labels, state }: Props ) => {
+    const issuesQuery = useQuery(
+        [ 'issues', { labels, state } ],
+        () => fetcherGetIssues( labels, state ),
+        ...
+    )
+    ...
+}
+```
+
+La función fetcher recibirá los argumentos de la siguiente manera:
+
+```ts
+export const fetcherGetIssues = async ( labels: string[], state?: StateType ): Promise<IssueType[]> => {...}
+```
+
+Dentro de nuestro componente `<ListView />` enviamos los elementos solicitados y que van cambiando de acuerdo a la selección del cliente:
+
+```tsx
+export const ListView = () => {
+    ...
+    const { issuesQuery: { isLoading, data } } = useIssues( { labels: selectedLabels, state } )
+    ...
+}
+```
+
+Volviendo a nuestra función fetcher, vamos a configurar la consulta para filtrar las issues a partir de su estado. Creamos una constante para las params de la consulta, y añadimos el estado si este es diferente a undefined:
+
+```ts
+export const fetcherGetIssues = async ( labels: string[], state?: StateType ): Promise<IssueType[]> => {
+    ...
+    const params = new URLSearchParams()
+
+    if ( state ) params.append( 'state', state )
+
+    const { data } = await githubApiClient.get<IssueType[]>( '/issues', { params } )
+    return data
+}
+```
