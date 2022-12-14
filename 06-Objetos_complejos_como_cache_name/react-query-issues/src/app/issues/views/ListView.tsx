@@ -2,10 +2,13 @@ import { useState } from 'react'
 import { LoadingIcon } from '../../shared/LoadingIcon'
 import { IssueList, LabelPicker } from '../components'
 import { useIssues } from '../hooks'
+import { StateType } from '../types'
 
 
 export const ListView = () => {
     const [ selectedLabels, setSelectedLabels ] = useState<string[]>( [] )
+
+    const [ state, setState ] = useState<StateType>()
 
     const { issuesQuery: { isLoading, data } } = useIssues()
 
@@ -21,7 +24,7 @@ export const ListView = () => {
                 {
                     isLoading
                         ? <LoadingIcon />
-                        : <IssueList issues={ data || [] } />
+                        : <IssueList issues={ data || [] } state={ state } onStateChange={ ( newState ) => setState( newState ) } />
                 }
             </div>
 

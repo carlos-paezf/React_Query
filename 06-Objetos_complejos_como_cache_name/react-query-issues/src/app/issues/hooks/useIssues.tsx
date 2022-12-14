@@ -1,12 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
-import { githubApiClient } from "../../api/githubApi"
-import type { IssueType } from "../types"
+import { fetcherGetIssues } from "../../api/functions-fetcher"
 
-
-const fetcherGetIssues = async (): Promise<IssueType[]> => {
-    const { data } = await githubApiClient.get<IssueType[]>( '/issues' )
-    return data
-}
 
 
 export const useIssues = () => {

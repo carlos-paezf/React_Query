@@ -9,29 +9,29 @@ export interface IssueType {
     node_id: string
     number: number
     title: string
-    user: User
-    labels: Label[]
-    state: State
+    user: UserType
+    labels: LabelType[]
+    state: StateType
     locked: boolean
-    assignee: User | null
-    assignees: User[]
+    assignee: UserType | null
+    assignees: UserType[]
     milestone: null
     comments: number
     created_at: string
     updated_at: string
     closed_at: null
-    author_association: AuthorAssociation
+    author_association: AuthorAssociationType
     active_lock_reason: null
     body: string
-    reactions: Reactions
+    reactions: ReactionsType
     timeline_url: string
     performed_via_github_app: null
     state_reason: null | string
     draft?: boolean
-    pull_request?: PullRequest
+    pull_request?: PullRequestType
 }
 
-export interface User {
+export interface UserType {
     login: string
     id: number
     node_id: string
@@ -57,14 +57,14 @@ export enum Type {
     User = "User",
 }
 
-export enum AuthorAssociation {
+export enum AuthorAssociationType {
     Collaborator = "COLLABORATOR",
     Contributor = "CONTRIBUTOR",
     Member = "MEMBER",
     None = "NONE",
 }
 
-export interface Label {
+export interface LabelType {
     id: number
     node_id: string
     url: string
@@ -74,7 +74,7 @@ export interface Label {
     description?: string
 }
 
-export interface PullRequest {
+export interface PullRequestType {
     url: string
     html_url: string
     diff_url: string
@@ -82,7 +82,7 @@ export interface PullRequest {
     merged_at: null
 }
 
-export interface Reactions {
+export interface ReactionsType {
     url: string
     total_count: number
     "+1": number
@@ -95,7 +95,7 @@ export interface Reactions {
     eyes: number
 }
 
-export enum State {
+export enum StateType {
     Open = "open",
     Closed = "closed"
 }

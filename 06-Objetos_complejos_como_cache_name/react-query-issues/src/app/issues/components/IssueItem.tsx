@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { FiCheckCircle, FiInfo, FiMessageSquare } from 'react-icons/fi'
 import { useNavigate } from 'react-router-dom'
 
-import { IssueType, State } from '../types'
+import { IssueType, StateType } from '../types'
 import { fetcherGetIssueComments, fetcherGetIssueInfo } from '../../api/functions-fetcher'
 
 
@@ -53,7 +53,7 @@ export const IssueItem: FC<Props> = ( { issue } ) => {
         >
             <div className="card-body d-flex align-items-center">
                 {
-                    state === State.Open
+                    state === StateType.Open
                         ? <FiInfo size={ 30 } color="red" />
                         : <FiCheckCircle size={ 30 } color="green" />
                 }
