@@ -29,3 +29,4 @@ Extensiones recomendadas sobre React:
 2. [Sección 03. React Query - IssuesApp](03-React_Query_IssuesApp/README.md)
 3. [Sección 04. Issues](04-Issues/README.md)
 4. [Sección 05. Optimizaciones](05-Optimizaciones/README.md)
+5. [Sección 06. Objetos completos como cache name](06-Objetos_complejos_como_cache_name/README.md)
