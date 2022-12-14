@@ -37,7 +37,10 @@ export const IssueItem: FC<Props> = ( { issue } ) => {
     const preSetData = () => {
         queryClient.setQueryData(
             [ "issue", number ],
-            issue
+            issue,
+            {
+                updatedAt: new Date().getTime() + ( 1000 * 60 )
+            }
         )
     }
 

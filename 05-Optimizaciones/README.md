@@ -93,3 +93,23 @@ export const IssueItem: FC<Props> = ( { issue } ) => {
 ```
 
 Cuando ingresamos a la aplicación y observamos la interacción con la red, podemos observar que se realiza una consulta para obtener todas las issues, y no vuelve a hacer peticiones sino hasta que se ingresa a una issue especifica y se cargan sus comentarios.
+
+## Cache - updatedAt
+
+Podemos definir en que momento se debe actualizar la información que esta en cache, es decir, hasta cuando se mantiene fresca la información y pasa a un estado de caducada. Por ejemplo, para el caso a continuación la información se considera fresca y no requiere de actualización durante 1 minuto, solo hasta que pase el tiempo definido hará de nuevo una petición http para actualizar la información.
+
+```tsx
+export const IssueItem: FC<Props> = ( { ... } ) => {
+    ...
+    const preSetData = () => {
+        queryClient.setQueryData(
+            [ "issue", number ],
+            issue,
+            {
+                updatedAt: new Date().getTime() + ( 1000 * 60 )
+            }
+        )
+    }
+    ...
+}
+```
