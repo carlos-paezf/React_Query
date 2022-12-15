@@ -125,3 +125,57 @@ export const fetcherGetIssues = async ( labels: string[], state?: StateType ): P
     return data
 }
 ```
+
+## Filtrar Issues - Labels
+
+Para hacer la consulta de las issue por los labels, la documentación de GitHub nos solicita que los enviamos separados por comas, por lo tanto, dentro de nuestro fetcher escribiremos las siguientes líneas de código:
+
+```ts
+export const fetcherGetIssues = async ( labels: string[], state?: StateType ): Promise<IssueType[]> => {
+    ...
+    if ( labels.length ) {
+        params.append( 'labels', labels.join( ',' ) )
+    }
+    ...
+}
+```
+
+Otro parámetro que enviaremos en la url será la página a mostrar y cantidad de resultados por página:
+
+```ts
+export const fetcherGetIssues = async ( labels: string[], state?: StateType ): Promise<IssueType[]> => {
+    ...
+    params.append( 'page', '1' )
+    params.append( 'per_page', '5' )
+}
+```
+
+Vamos a mostrar los labels de las issues desde el componente `<IssueItem />`:
+
+```tsx
+export const IssueItem: FC<Props> = ( { issue } ) => {
+    ...
+    return (
+        <div ...> 
+            <div ...>
+                ...
+                <div ...>
+                    ...
+                    <div>
+                        {
+                            issue.labels.map( label =>
+                                <span key={ label.id }
+                                    className="badge rounded-pill m1"
+                                    style={ { background: `#${ label.color }`, color: 'black' } }>
+                                    { label.name }
+                                </span>
+                            )
+                        }
+                    </div>
+                </div>
+                ...
+            </div>
+        </div>
+    )
+}
+```
