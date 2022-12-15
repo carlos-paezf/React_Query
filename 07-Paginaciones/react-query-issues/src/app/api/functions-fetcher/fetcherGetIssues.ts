@@ -16,7 +16,7 @@ export const fetcherGetIssues = async ( labels: string[], state?: StateType ): P
     if ( labels.length ) params.append( 'labels', labels.join( ',' ) )
 
     params.append( 'page', '1' )
-    params.append( 'per_page', '100' )
+    params.append( 'per_page', '10' )
 
     const { data } = await githubApiClient.get<IssueType[]>( '/issues', { params } )
     return data
