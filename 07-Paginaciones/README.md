@@ -102,3 +102,76 @@ export const ListView = () => {
     )
 }
 ```
+
+## Optimizaciones y validaciones
+
+Es posible que el usuario nos "bombardee" con peticiones ya seas al next o al previous, lo que haremos será bloquear los botones mientras se hacen las peticiones, para lo cual haremos lo siguiente:
+
+```tsx
+export const ListView = () => {
+    ...
+    const { issuesQuery: { ..., isFetching }, ... } = useIssues( ... )
+    ...
+    return (
+        <div ...>
+            <div ...>
+                ...
+                <div className='d-flex mt-2 justify-content-between'>
+                    <button ... disabled={ isFetching }>Prev</button>
+                    ...
+                    <button ... disabled={ isFetching }>Next</button>
+                </div>
+            </div>
+            ...
+        </div>
+    )
+}
+```
+
+Otra optimización será la de mostrar un mensaje en vez del número de la página al momento en que se está cargando la consulta, para lo cual modificamos el hook cuando retorna el getter de la página de la siguiente manera:
+
+```tsx
+export const useIssues = ( { labels, state }: Props ) => {
+    ...
+    return {
+        ..., // properties
+        page: issuesQuery.isFetching ? 'Loading' : page, // getters
+        ... // setters
+    }
+}
+```
+
+Hay un bug al momento de seleccionar un label o cambiar de estado (abierto, cerrado), ya que el número de página no se resetea. Para solucionar esto, incluimos un `useEffect` dentro del hook para que restaure el estado de la paginación cada que cambie el state o los labels:
+
+```tsx
+import { useState, useEffect } from 'react'
+
+export const useIssues = ( { labels, state }: Props ) => {
+    ...
+    useEffect( () => {
+        setPage( 1 )
+    }, [ state, labels ] )
+    ...
+}
+```
+
+Una nueva funcionalidad sería desactivar los botones de prev y next en otros casos especiales, por ejemplo:
+
+```tsx
+export const ListView = () => {
+    ...
+    return (
+        <div ...>
+            <div ...>
+                ...
+                <div ...>
+                    <button ... disabled={ isFetching || page <= 1 }>Prev</button>
+                    ...
+                    <button ... disabled={ isFetching || !data || data?.length < 5 }>Next</button>
+                </div>
+            </div>
+            ...
+        </div>
+    )
+}
+```

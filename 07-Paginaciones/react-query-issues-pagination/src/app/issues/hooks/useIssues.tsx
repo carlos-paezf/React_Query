@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { useState } from "react"
+import { useEffect, useState } from 'react'
 import { fetcherGetIssues } from "../../api/functions-fetcher"
 import { StateType } from "../types"
 
@@ -12,6 +12,10 @@ type Props = {
 
 export const useIssues = ( { labels, state }: Props ) => {
     const [ page, setPage ] = useState( 1 )
+
+    useEffect( () => {
+        setPage( 1 )
+    }, [ state, labels ] )
 
     const issuesQuery = useQuery(
         [ 'issues', { labels, state, page } ],
@@ -33,5 +37,9 @@ export const useIssues = ( { labels, state }: Props ) => {
         setPage( page - 1 )
     }
 
-    return { issuesQuery, page, nextPage, prevPage }
+    return {
+        issuesQuery,
+        page: issuesQuery.isFetching ? 'Loading' : page,
+        nextPage, prevPage
+    }
 }

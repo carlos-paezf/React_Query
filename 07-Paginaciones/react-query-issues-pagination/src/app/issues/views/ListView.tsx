@@ -10,7 +10,7 @@ export const ListView = () => {
 
     const [ state, setState ] = useState<StateType>()
 
-    const { issuesQuery: { isLoading, data }, page, nextPage, prevPage } = useIssues( { labels: selectedLabels, state } )
+    const { issuesQuery: { data, isLoading, isFetching }, page, nextPage, prevPage } = useIssues( { labels: selectedLabels, state } )
 
     const onLabelChange = ( labelName: string ) => {
         ( selectedLabels.includes( labelName ) )
@@ -28,9 +28,9 @@ export const ListView = () => {
                 }
 
                 <div className='d-flex mt-2 justify-content-between'>
-                    <button className="btn btn-outline-primary" onClick={ prevPage }>Prev</button>
+                    <button className="btn btn-outline-primary" onClick={ prevPage } disabled={ isFetching || page <= 1 }>Prev</button>
                     <span>{ page }</span>
-                    <button className="btn btn-outline-primary" onClick={ nextPage }>Next</button>
+                    <button className="btn btn-outline-primary" onClick={ nextPage } disabled={ isFetching || !data || data?.length < 5 }>Next</button>
                 </div>
             </div>
 
