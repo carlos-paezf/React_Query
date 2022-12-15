@@ -1,4 +1,3 @@
-import { sleep } from "../../helpers/sleep"
 import { IssueType } from "../../issues/types"
 import { githubApiClient } from "../githubApi"
 
@@ -9,7 +8,6 @@ import { githubApiClient } from "../githubApi"
  * @returns The data object from the response.
  */
 export const fetcherGetIssueInfo = async ( issueNumber: number ): Promise<IssueType> => {
-    await sleep( 1 )
     const { data } = await githubApiClient.get<IssueType>( `/issues/${ issueNumber }` )
     return data
 }

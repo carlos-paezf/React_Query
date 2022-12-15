@@ -1,4 +1,3 @@
-import { sleep } from "../../helpers/sleep"
 import { LabelType } from "../../issues/types"
 import { githubApiClient } from "../githubApi"
 
@@ -8,7 +7,6 @@ import { githubApiClient } from "../githubApi"
  * @returns An array of LabelType objects.
  */
 export const fetcherGetLabels = async (): Promise<LabelType[]> => {
-    await sleep( 2 )
     const { data } = await githubApiClient.get<LabelType[]>( '/labels', {
         headers: {
             Authorization: null
