@@ -179,3 +179,64 @@ export const IssueItem: FC<Props> = ( { issue } ) => {
     )
 }
 ```
+
+## Actualizar la fecha de creación
+
+Vamos a crear una función dentro de los helpers para que se encargue de mostrar la fecha de creación de una manera más elegante:
+
+```ts
+export const timeSince = ( date: string ) => {
+
+    const baseDate = new Date( date )
+
+    const seconds = Math.floor( ( new Date().getTime() - baseDate.getTime() ) / 1000 )
+
+    let interval = seconds / 31536000
+
+    if ( interval > 1 ) {
+        return Math.floor( interval ) + " years"
+    }
+    interval = seconds / 2592000
+    if ( interval > 1 ) {
+        return Math.floor( interval ) + " months"
+    }
+    interval = seconds / 86400
+    if ( interval > 1 ) {
+        return Math.floor( interval ) + " days"
+    }
+    interval = seconds / 3600
+    if ( interval > 1 ) {
+        return Math.floor( interval ) + " hours"
+    }
+    interval = seconds / 60
+    if ( interval > 1 ) {
+        return Math.floor( interval ) + " minutes"
+    }
+    return Math.floor( seconds ) + " seconds"
+}
+```
+
+Ahora bien, dentro del componente `<IssueITem />` hacemos uso de la función anterior:
+
+```tsx
+...
+import { timeSince } from '../../helpers'
+...
+export const IssueItem: FC<Props> = ( { issue } ) => {
+    const { ..., created_at } = issue
+    ...
+    return (
+        <div ...>
+            <div ...>
+                ...
+                <div ...>
+                    ...
+                    <span className="issue-subinfo">#{ number } opened { timeSince( created_at ) } ago by <span className="fw-bold">{ user.login }</span></span>
+                    ...
+                </div>
+                ...
+            </div>
+        </div>
+    )
+}
+```

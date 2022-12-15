@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { IssueType, StateType } from '../types'
 import { fetcherGetIssueComments, fetcherGetIssueInfo } from '../../api/functions-fetcher'
+import { timeSince } from '../../helpers'
 
 
 type Props = {
@@ -13,7 +14,7 @@ type Props = {
 
 
 export const IssueItem: FC<Props> = ( { issue } ) => {
-    const { state, title, number, user, comments } = issue
+    const { state, title, number, user, comments, created_at } = issue
 
     const navigate = useNavigate()
 
@@ -60,7 +61,7 @@ export const IssueItem: FC<Props> = ( { issue } ) => {
 
                 <div className="d-flex flex-column flex-fill px-2">
                     <span>{ title }</span>
-                    <span className="issue-subinfo">#{ number } opened 2 days ago by <span className="fw-bold">{ user.login }</span></span>
+                    <span className="issue-subinfo">#{ number } opened { timeSince( created_at ) } ago by <span className="fw-bold">{ user.login }</span></span>
                     <div>
                         {
                             issue.labels.map( label =>

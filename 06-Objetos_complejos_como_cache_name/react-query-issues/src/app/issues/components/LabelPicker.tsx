@@ -19,8 +19,8 @@ export const LabelPicker: FC<Props> = ( { selectedLabels, onLabelChange } ) => {
             {
                 data?.map( ( { id, color, name } ) => (
                     <span key={ id }
-                        className={ `badge rounded-pill m-1 label-picker ${ selectedLabels.includes( name ) && 'label-active' }` }
-                        style={ { border: `1px solid #${ color } `, color: `#${ color }` } }
+                        className={ `badge rounded-pill m-1 label-picker` }
+                        style={ { border: `1px solid #${ color }`, background: `${ selectedLabels.includes( name ) && `#${ color }` }`, color: `#${ color }` } }
                         onClick={ () => onLabelChange( name ) }
                     >
                         { name }
