@@ -175,3 +175,22 @@ export const ListView = () => {
     )
 }
 ```
+
+## Preparación para el infinite scroll
+
+Para evitar complicaciones o confusión dentro del proyecto, hice una copia del proyecto dentro del cual aplicaré la estrategia del infinite scroll. Lo primero será reemplazar los botones de prev y next por un botón de load more:
+
+```tsx
+export const ListView = () => {
+    ...
+    return (
+        <div ...>
+            <div ...>
+                ...
+                <button className="btn btn-outline-primary mt-3" disabled={ isFetching }>Load more...</button>
+            </div>
+            ...
+        </div>
+    )
+}
+```
