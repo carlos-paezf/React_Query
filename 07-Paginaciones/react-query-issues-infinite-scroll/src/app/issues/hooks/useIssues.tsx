@@ -1,5 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
-import { useEffect, useState } from 'react'
+import { useInfiniteQuery } from "@tanstack/react-query"
 import { fetcherGetIssues } from "../../api/functions-fetcher"
 import { StateType } from "../types"
 
@@ -11,35 +10,12 @@ type Props = {
 
 
 export const useIssues = ( { labels, state }: Props ) => {
-    const [ page, setPage ] = useState( 1 )
-
-    useEffect( () => {
-        setPage( 1 )
-    }, [ state, labels ] )
-
-    const issuesQuery = useQuery(
-        [ 'issues', { labels, state, page } ],
-        () => fetcherGetIssues( { labels, state, page } ),
-        {
-            refetchOnWindowFocus: false
-        }
+    const issuesQuery = useInfiniteQuery(
+        [ 'issues', 'infinite', { state, labels, page: 1 } ],
+        ( data ) => fetcherGetIssues( data )
     )
 
-    const nextPage = () => {
-        if ( !issuesQuery.data?.length ) return
-
-        setPage( page + 1 )
-    }
-
-    const prevPage = () => {
-        if ( page <= 1 ) return
-
-        setPage( page - 1 )
-    }
-
     return {
-        issuesQuery,
-        page: issuesQuery.isFetching ? 'Loading' : page,
-        nextPage, prevPage
+        issuesQuery
     }
 }

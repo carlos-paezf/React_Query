@@ -194,3 +194,22 @@ export const ListView = () => {
     )
 }
 ```
+
+## Infinite Scroll
+
+Vamos a modificar nuestro custom hook `useIssues` con el fin de hacer una consulta con el hook `useInfiniteQuery` de react-query. Cómo ya no tenemos un estado para la página actual que está viendo el usuario, entonces establecemos un valor de 1 dentro del nombre de la cache, para tener una referencia de la misma. Luego le enviaremos unas propiedades especificas a la función de fetcher, pero por el momento enviamos el objeto completo de la data.
+
+```tsx
+import { useInfiniteQuery } from "@tanstack/react-query"
+...
+export const useIssues = ( { labels, state }: Props ) => {
+    const issuesQuery = useInfiniteQuery(
+        [ 'issues', 'infinite', { state, labels, page: 1 } ],
+        ( data ) => fetcherGetIssues( data )
+    )
+
+    return {
+        issuesQuery
+    }
+}
+```
