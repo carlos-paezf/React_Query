@@ -213,3 +213,77 @@ export const useIssues = ( { labels, state }: Props ) => {
     }
 }
 ```
+
+## Obtener información del QueryKey
+
+Necesitamos actualizar el método fetcher, con el fin de que se pueda adaptar a la data que se enviará desde la query de `useInfinityQuery`. Primero definimos una interfaz que nos ayudara a definir que elementos recibimos desde la consulta, posteriormente desestructuramos la data que requerimos del arreglo de `queryKey`. Seguido a esto, volvemos a desestructurar está propiedad y extraemos el estado y los labels. Hacemos uso de las propiedades que desestructuramos tanto en las props del método, como dentro del mismo, con el fin de actualizar la función a nuestra nueva necesidad.
+
+```tsx
+interface Props {
+    labels: string[]
+    state?: StateType
+    page: number
+}
+
+interface QueryProps {
+    pageParam?: number
+    queryKey: ( string | Props )[]
+}
+
+export const fetcherGetIssues = async ( { pageParam = 1, queryKey }: QueryProps ): Promise<IssueType[]> => {
+    const [ , , args ] = queryKey
+    const { state, labels } = args as Props
+
+    const params = new URLSearchParams()
+
+    if ( state ) params.append( 'state', state )
+    if ( labels.length ) params.append( 'labels', labels.join( ',' ) )
+
+    params.append( 'page', pageParam.toString() )
+    params.append( 'per_page', '5' )
+
+    const { data } = await githubApiClient.get<IssueType[]>( '/issues', { params } )
+    return data
+}
+```
+
+En nuestro custom hook enviamos la información que nos solicita el fetcher.
+
+```tsx
+export const useIssues = ( { labels, state }: Props ) => {
+    const issuesQuery = useInfiniteQuery(
+        [ 'issues', 'infinite', { state, labels, page: 1 } ],
+        ( data ) => fetcherGetIssues( {
+            pageParam: data.pageParam,
+            queryKey: data.queryKey
+        } )
+    )
+
+    return {
+        issuesQuery
+    }
+}
+```
+
+Ahora es importante que actualicemos el componente `<ListView />`, ya que la data que recibimos de la consulta, es de tipo `InfiniteData<IssueType[]>` y dentro de la misma hay una propiedad llamada `pages`, la cual es un arreglo de arreglos con nuestra información. Para solucionar dicho inconveniente usamos la función `flat()` con el fin de aplanar los arreglos`y convertirlos en un solo array:
+
+```tsx
+export const ListView = () => {
+    ...
+    const { issuesQuery: { data, ... } } = useIssues( ... )
+    ...
+    return (
+        <div ...>
+            <div ...>
+                {
+                    isLoading
+                        ? ...
+                        : <IssueList issues={ data?.pages.flat() || [] } ... />
+                }
+                ...
+            </div>
+            ...
+        </div>
+    )
+}
+```

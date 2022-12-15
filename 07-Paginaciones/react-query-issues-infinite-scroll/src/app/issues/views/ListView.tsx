@@ -24,7 +24,7 @@ export const ListView = () => {
                 {
                     isLoading
                         ? <LoadingIcon />
-                        : <IssueList issues={ data || [] } state={ state } onStateChange={ ( newState ) => setState( newState ) } />
+                        : <IssueList issues={ data?.pages.flat() || [] } state={ state } onStateChange={ ( newState ) => setState( newState ) } />
                 }
 
                 <button className="btn btn-outline-primary mt-3" disabled={ isFetching }>Load more...</button>

@@ -12,7 +12,10 @@ type Props = {
 export const useIssues = ( { labels, state }: Props ) => {
     const issuesQuery = useInfiniteQuery(
         [ 'issues', 'infinite', { state, labels, page: 1 } ],
-        ( data ) => fetcherGetIssues( data )
+        ( data ) => fetcherGetIssues( {
+            pageParam: data.pageParam,
+            queryKey: data.queryKey
+        } )
     )
 
     return {
