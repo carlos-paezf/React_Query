@@ -222,7 +222,6 @@ Necesitamos actualizar el método fetcher, con el fin de que se pueda adaptar a 
 interface Props {
     labels: string[]
     state?: StateType
-    page: number
 }
 
 interface QueryProps {
@@ -252,7 +251,7 @@ En nuestro custom hook enviamos la información que nos solicita el fetcher.
 ```tsx
 export const useIssues = ( { labels, state }: Props ) => {
     const issuesQuery = useInfiniteQuery(
-        [ 'issues', 'infinite', { state, labels, page: 1 } ],
+        [ 'issues', 'infinite', { state, labels } ],
         ( data ) => fetcherGetIssues( {
             pageParam: data.pageParam,
             queryKey: data.queryKey
@@ -281,6 +280,52 @@ export const ListView = () => {
                         : <IssueList issues={ data?.pages.flat() || [] } ... />
                 }
                 ...
+            </div>
+            ...
+        </div>
+    )
+}
+```
+
+## Infinite Scroll - Siguiente Página
+
+Vamos a darle funcionalidad al botón de load more. Lo primero será definir una función dentro de las opciones de la query que estamos haciendo en nuestro custom hook. Mediante dicho método podemos obtener la siguiente página apoyándonos en la idea de que si la última página de la consulta anterior no trae nada, entonces no retorne nada, pero si por el contrario trae información, entonces pueda incrementar el tamaño de las páginas en 1.
+
+```tsx
+export const useIssues = ( ... ) => {
+    const issuesQuery = useInfiniteQuery(
+        ...,
+        {
+            getNextPageParam: ( lastPage, pages ) => {
+                if ( !lastPage.length ) return
+                return pages.length + 1
+            }
+        }
+    )
+    ...
+}
+```
+
+Dentro del componente `<ListView />` llamamos la función `issueQuery.fetchNextPage()` al momento de hacer click en el botón de cargar más, y lo desactivamos si no esta haciendo la consulta a la API o no hay una siguiente página.
+
+```tsx
+import { useState } from 'react'
+import { LoadingIcon } from '../../shared/LoadingIcon'
+import { IssueList, LabelPicker } from '../components'
+import { useIssues } from '../hooks'
+import { StateType } from '../types'
+
+
+export const ListView = () => {
+    ...
+    const { issuesQuery: { ..., fetchNextPage, hasNextPage } } = useIssues( ... )
+    ...
+    return (
+        <div ...>
+            <div ...>
+                ...
+                <button ... onClick={ () => fetchNextPage() }
+                    disabled={ isFetching || !hasNextPage }>Load more...</button>
             </div>
             ...
         </div>

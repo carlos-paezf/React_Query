@@ -10,7 +10,7 @@ export const ListView = () => {
 
     const [ state, setState ] = useState<StateType>()
 
-    const { issuesQuery: { data, isLoading, isFetching } } = useIssues( { labels: selectedLabels, state } )
+    const { issuesQuery: { data, isLoading, isFetching, fetchNextPage, hasNextPage } } = useIssues( { labels: selectedLabels, state } )
 
     const onLabelChange = ( labelName: string ) => {
         ( selectedLabels.includes( labelName ) )
@@ -27,7 +27,9 @@ export const ListView = () => {
                         : <IssueList issues={ data?.pages.flat() || [] } state={ state } onStateChange={ ( newState ) => setState( newState ) } />
                 }
 
-                <button className="btn btn-outline-primary mt-3" disabled={ isFetching }>Load more...</button>
+                <button className="btn btn-outline-primary mt-3"
+                    disabled={ isFetching || !hasNextPage }
+                    onClick={ () => fetchNextPage() }>Load more...</button>
             </div>
 
             <div className="col-4">

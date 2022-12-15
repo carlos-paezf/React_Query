@@ -5,7 +5,6 @@ import { githubApiClient } from "../githubApi"
 interface Props {
     labels: string[]
     state?: StateType
-    page: number
 }
 
 interface QueryProps {
