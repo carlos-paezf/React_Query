@@ -30,3 +30,4 @@ Extensiones recomendadas sobre React:
 3. [Sección 04. Issues](04-Issues/README.md)
 4. [Sección 05. Optimizaciones](05-Optimizaciones/README.md)
 5. [Sección 06. Objetos completos como cache name](06-Objetos_complejos_como_cache_name/README.md)
+6. [Sección 07. Paginaciones](07-Paginaciones/README.md)
