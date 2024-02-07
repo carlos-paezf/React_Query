@@ -441,3 +441,55 @@ ReactDOM.createRoot( document.getElementById( 'root' )! ).render(
     </React.StrictMode>,
 );
 ```
+
+## Levantar el backend
+
+Vamos a crear un backend rápido usando el paquete `json-server`, para lo cual, creamos el directorio `fake-backend` y corremos el siguiente comando:
+
+```txt
+$: npm init -y
+```
+
+Luego instalamos el paquete requerido:
+
+```txt
+$: pnpm i json-server
+```
+
+En un archivo llamado `db.json` guardaremos la data con la cual vamos a interactuar en el proyecto, y en el archivo `db-original.json` tendremos un backup de la información inicial. Y para poder usar dicha data, vamos a añadir un script para correr nuestro backend temporal:
+
+```json
+{
+    ...
+    "scripts": {
+        "start": "json-server db.json --port 3100",
+        ...
+    },
+    ...
+}
+```
+
+Cuando ejecutamos en la terminal del backend `pnpm start`, vamos a ver el siguiente output:
+
+```txt
+$:  pnpm start
+
+> fake-backend@1.0.0 start C:\Users\carlo\Documents\Cursos\React_Query\08-Preparacion_Refuerzo\fake-backend
+> json-server db.json --port 3100
+
+JSON Server started on PORT :3100
+Press CTRL-C to stop
+Watching db.json...
+
+( ˶ˆ ᗜ ˆ˵ )
+
+Index:
+http://localhost:3100/
+
+Static files:
+Serving ./public directory if it exists
+
+Endpoints:
+http://localhost:3100/products
+```
+  
