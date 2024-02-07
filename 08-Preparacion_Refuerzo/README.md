@@ -617,3 +617,47 @@ export const getProducts = async ( { filterKey }: GetProductsOptions ) => {
     return data;
 };
 ```
+
+## useQuery - Listado de productos
+
+Vamos a hacer la petición HTTP usando `useQuery`. Lo primero será crear un custom hook para mantener un código ordenado y legible:
+
+```ts
+import { useQuery } from "@tanstack/react-query";
+import { productsActions } from "..";
+
+interface UseProductsOptions {
+    filterKey?: string;
+}
+
+export const useProducts = ( { filterKey }: UseProductsOptions ) => {
+    const { isLoading, isError, error, data: products = [], isFetching } = useQuery( {
+        queryKey: [ "products", filterKey ],
+        queryFn: () => productsActions.getProducts( { filterKey } ),
+        staleTime: 1000 * 60 * 60
+    } );
+
+    return { error, isError, isFetching, isLoading, products };
+};
+```
+
+Luego, en el componente de listado completo de productos hacemos uso del hook:
+
+```ts
+import { FC } from "react";
+import { ProductList, useProducts } from "..";
+
+export const CompleteListPage: FC = () => {
+    const { isLoading, products } = useProducts( {} );
+
+    return (
+        <div className="flex-col">
+            <h1 className="text-2xl font-bold">Todos los productos</h1>
+
+            { isLoading && <p>Cargando...</p> }
+
+            <ProductList products={ products } />
+        </div>
+    );
+};
+```

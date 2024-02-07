@@ -11,3 +11,7 @@ export { WomenPage } from "./pages/WomenPage";
 export type { Product } from './interfaces/product';
 
 export { productsAPI } from './api/productsAPI';
+
+export * as productsActions from './services/actions';
+
+export { useProducts } from './hooks/useProducts';
