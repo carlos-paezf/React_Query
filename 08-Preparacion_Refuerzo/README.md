@@ -661,3 +661,68 @@ export const CompleteListPage: FC = () => {
     );
 };
 ```
+
+## Mostrar los productos
+
+Ahora, vamos a listar los productos que obtenemos de la consulta al backend. En el componente `ProductList` vamos recibir props y recorrer el listado para usar el component `ProductCard`:
+
+```tsx
+import { FC } from "react";
+import { Product, ProductCard } from "..";
+
+type Props = {
+    products: Product[];
+};
+
+export const ProductList: FC<Props> = ( { products } ) => {
+    return (
+        <div className="...">
+            { products.map( product => <ProductCard key={ product.id } product={ product } /> ) }
+        </div>
+    );
+};
+```
+
+En el componente `ProductCard` hacemos la siguiente modificación:
+
+```tsx
+import { Card, Image } from "@nextui-org/react";
+import { FC } from "react";
+import { Product } from "..";
+
+type Props = {
+    product: Product;
+};
+
+export const ProductCard: FC<Props> = ( { product } ) => {
+    return (
+        <Card className="...">
+            <div className="...">
+                <Image src={ product.image }
+                    alt="tailwind logo"
+                    width={ 300 }
+                    height={ 400 }
+                    className="..." />
+            </div>
+
+            <div className="...">
+                <div className="...">
+                    <p className="...">{ product.category }</p>
+                </div>
+
+                <h3 className="...">
+                    { product.title }
+                </h3>
+
+                <p className="...">
+                    { product.description.slice( 0, 75 ) }...
+                </p>
+
+                <p className="...">
+                    ${ product.price }<span className="..."> +impuesto</span>
+                </p>
+            </div>
+        </Card>
+    );
+};
+```
