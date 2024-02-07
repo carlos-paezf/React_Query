@@ -492,4 +492,69 @@ Serving ./public directory if it exists
 Endpoints:
 http://localhost:3100/products
 ```
-  
+
+## Configurar TanStack Query
+
+Dentro del proyecto de React, vamos a realizar la instalación de TanStack Query. Los pasos a seguir se encuentran en la documentación oficial [TanStack Query](https://tanstack.com/query/latest). Cómo estaremos usando npm como gestor de paquetes para el proyecto frontend, vamos a realizar la instalación con el siguiente comando:
+
+```txt
+$: npm i @tanstack/react-query
+```
+
+Para usar de manera global del provider de React Query, vamos crear una carpeta llamada `src/plugins`, y dentro del mismo creamos un componente en el archivo `TanStackProvider.tsx` para determinar el provider, el cual es un HoC (Higher-order Component)
+
+```tsx
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { FC } from 'react';
+
+const queryClient = new QueryClient();
+
+export const TanStackProvider: FC<React.PropsWithChildren> = ( { children } ) => {
+    return (
+        <QueryClientProvider client={ queryClient }>
+            { children }
+        </QueryClientProvider>
+    );
+};
+```
+
+En el archivo `main.tsx` vamos a ubicar nuestro provider, teniendo en cuenta que debe abarcar todas las peticiones HTTP:
+
+```tsx
+...
+import { TanStackProvider } from './plugins/TanStackProvider';
+
+ReactDOM.createRoot( document.getElementById( 'root' )! ).render(
+    <React.StrictMode>
+        <TanStackProvider>
+            <NextUIProvider>
+                <main className="dark text-foreground bg-background">
+                    <RouterProvider router={ router } />
+                </main>
+            </NextUIProvider>
+        </TanStackProvider>
+    </React.StrictMode>,
+);
+```
+
+Para instalar las DevTools usaremos el siguiente comando:
+
+```txt
+$: npm i @tanstack/react-query-devtools
+```
+
+Volvemos al provider y realizamos la configuración de las devtools:
+
+```tsx
+...
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+...
+export const TanStackProvider: FC<React.PropsWithChildren> = ( { children } ) => {
+    return (
+        <QueryClientProvider client={ queryClient }>
+            ...
+            <ReactQueryDevtools initialIsOpen={ false } />
+        </QueryClientProvider>
+    );
+};
+```
