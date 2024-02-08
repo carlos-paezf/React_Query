@@ -911,3 +911,17 @@ export const ProductCard: FC<Props> = ( { product, fullDescription = false } ) =
 ```
 
 Claro está, para el componente de producto por id, pasamos la bandera de `fullDescription` como `true`.
+
+## Scroll To Top
+
+En esta pequeña lección vamos a implementar la funcionalidad de Scroll To Top, con la intención de que siempre estemos en la parte superior cuando vemos el detalle de un producto, para ello iremos al componente `ProductById` y añadimos un `useEffect`:
+
+```tsx
+import { useEffect } from "react";
+...
+export const ProductByIdPage = () => {
+    ...
+    useEffect( () => { window.scrollTo( 0, 0 ); }, [] );
+    ...
+};
+```
