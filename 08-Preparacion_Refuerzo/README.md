@@ -786,3 +786,128 @@ export const getProducts = async ( { filterKey }: GetProductsOptions ) => {
 ```
 
 Cuando se haga una petición con un argumento nuevo, se mantendrá fresca la información, logrando una interacción más amena para el usuario.
+
+## Producto por ID
+
+Vamos a aprovechar que cada producto tiene un id, pero debemos tener cuidado que los argumentos en la URL son de tipo string, pero en React Query si se toma en cuenta el Case Sensitive y puede llevar a almacenar en diferente cache la consulta para `"0"` o para `0`.
+
+Vamos a crear una nueva página para un producto por id:
+
+```tsx
+export const ProductByIdPage = () => {
+    return (
+        <div className='flex-col'>
+            <h1 className="text-2xl font-bold">Producto</h1>
+        </div>
+    );
+};
+```
+
+Para poder acceder a dicha página, debemos ir al router y añadir el nuevo elemento:
+
+```ts
+export const router = createBrowserRouter( [
+    {
+        path: '/',
+        element: <StoreLayout />,
+        errorElement: <ErrorPage />,
+        children: [
+            ...,
+            { path: "product/:id", element: <ProductByIdPage /> },
+        ]
+    }
+] );
+```
+
+La siguiente funcionalidad consiste en atrapar una tarjeta de producto dentro de un elemento `Link` que nos ayude a navegar a nuestra nueva página.
+
+```tsx
+import { Link } from "react-router-dom";
+...
+export const ProductCard: FC<Props> = ( { product } ) => {
+    return (
+        <Link to={ `/product/${ product.id }` }>
+            ...
+        </Link>
+    );
+};
+```
+
+Ahora vamos a crear un nuevo hook para usar `useQuery` en la petición:
+
+```ts
+import { useQuery } from "@tanstack/react-query";
+import { productsActions } from "..";
+
+export const useProduct = ( id: number ) => {
+    const { isLoading, isError, error, data: product, isFetching } = useQuery( {
+        queryKey: [ "product", id ],
+        queryFn: () => productsActions.getProductById( id ),
+        staleTime: 1000 * 60 * 60
+    } );
+
+    return { error, isError, isFetching, isLoading, product };
+};
+```
+
+En las acciones creamos el método para obtener el producto:
+
+```ts
+export const getProductById = async ( id: number ): Promise<Product> => {
+    const { data } = await productsAPI.get<Product>( `/products/${ id }` );
+
+    return data;
+};
+```
+
+Finalmente, volvemos a nuestra página de producto por ID y usamos el custom hook:
+
+```tsx
+import { useParams } from "react-router-dom";
+import { ProductCard, useProduct } from "..";
+
+
+export const ProductByIdPage = () => {
+    const { id } = useParams();
+
+    const { product, isLoading } = useProduct( { id: Number( id )! } );
+
+    return (
+        <div className='flex-col'>
+            { isLoading && <p>Cargando...</p> }
+
+            { product && ( <ProductCard product={ product } /> ) }
+        </div>
+    );
+};
+```
+
+Para corregir un pequeño error en la visualización de la descripción del producto, vamos al componente de `ProductCard`, añadimos una nueva propiedad a las props y ajustamos el template:
+
+```tsx
+type Props = {
+    product: Product;
+    fullDescription?: boolean;
+};
+
+
+export const ProductCard: FC<Props> = ( { product, fullDescription = false } ) => {
+    return (
+        <Link to={ `/product/${ product.id }` }>
+            <Card className="...">
+                <div className="...">...</div>
+
+                <div className="...">
+                    ...
+                    <p className="...">
+                        { fullDescription ? product.description : ( product.description.slice( 0, 75 ) + '...' ) }
+                    </p>
+                    ...
+                </div>
+            </Card>
+        </Link>
+    );
+};
+```
+
+Claro está, para el componente de producto por id, pasamos la bandera de `fullDescription` como `true`.
