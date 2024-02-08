@@ -726,3 +726,63 @@ export const ProductCard: FC<Props> = ( { product } ) => {
     );
 };
 ```
+
+## Artículos de Hombre y Mujer
+
+En esta lección vamos a trabajar las pantallas de hombres y mujeres, y aquí vamos a usar el hook que creamos anteriormente para obtener los productos. Primero haremos la modificación en la sección de los hombres:
+
+```tsx
+import { FC } from "react";
+import { ProductList, useProducts } from "..";
+
+
+export const MenPage: FC = () => {
+    const { isLoading, products } = useProducts( {
+        filterKey: "men's clothing"
+    } );
+
+
+    return (
+        <div className="flex-col">
+            <h1 className="text-2xl font-bold">Productos para hombres</h1>
+
+            { isLoading && <p>Cargando...</p> }
+
+            <ProductList products={ products } />
+        </div>
+    );
+};
+```
+
+Haremos lo mismo para la sección de mujeres. El tema es que no estamos observando ningún cambio en comparación con el listado total de productos, pese a que estamos pasando el filterKey, aún no lo usamos en el servicio. Por ello, hacemos la siguiente modificación en la acción de obtener productos:
+
+```ts
+export const getProducts = async ( { filterKey }: GetProductsOptions ) => {
+    const filterURL = filterKey ? `category=${ filterKey }` : '';
+
+    const { data } = await productsAPI.get<Product[]>( `/products?${ filterURL }` );
+
+    return data;
+};
+```
+
+Podemos simular un retraso en la petición para comprobar la funcionalidad de React Query:
+
+```ts
+const sleep = ( seconds: number = 2 ): Promise<boolean> => {
+    return new Promise( resolve => setTimeout( () => resolve( true ), seconds * 1000 ) );
+};
+
+
+export const getProducts = async ( { filterKey }: GetProductsOptions ) => {
+    await sleep();
+
+    const filterURL = filterKey ? `category=${ filterKey }` : '';
+
+    const { data } = await productsAPI.get<Product[]>( `/products?${ filterURL }` );
+
+    return data;
+};
+```
+
+Cuando se haga una petición con un argumento nuevo, se mantendrá fresca la información, logrando una interacción más amena para el usuario.
