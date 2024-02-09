@@ -15,5 +15,6 @@ export { productsAPI } from './api/productsAPI';
 
 export * as productsActions from './services/actions';
 
+export { usePrefetchProduct } from "./hooks/usePrefetchProduct";
 export { useProduct } from './hooks/useProduct';
 export { useProducts } from './hooks/useProducts';

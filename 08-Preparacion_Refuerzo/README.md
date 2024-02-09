@@ -925,3 +925,57 @@ export const ProductByIdPage = () => {
     ...
 };
 ```
+
+## Prefetch de productos
+
+Cuando pasemos el cursor por cada uno de los productos, queremos hacer una petición adelantada de los mismos y de esa manera tener una aplicación rápida en cuanto interacción. Creamos un custom hook para mantener ordenado el código, y dentro de dicha función retornamos la función prefetch:
+
+```ts
+import { useQueryClient } from "@tanstack/react-query";
+import { productsActions } from "..";
+
+
+export const usePrefetchProduct = () => {
+    const queryClient = useQueryClient();
+
+    const preFetchProduct = ( id: number ) => {
+        queryClient.prefetchQuery( {
+            queryKey: [ 'product', id ],
+            queryFn: () => productsActions.getProductById( id )
+        } );
+    };
+
+    return { preFetchProduct };
+};
+```
+
+Dentro de la lista de producto llamamos el custom hook, y pasamos la función retornada dentro de los parámetros de la tarjeta de producto:
+
+```tsx
+export const ProductList: FC<Props> = ( { products } ) => {
+    const { preFetchProduct } = usePrefetchProduct();
+
+    return (
+        <div className="...">
+            { products.map( product => <ProductCard ... preFetchProduct={ preFetchProduct } /> ) }
+        </div>
+    );
+};
+```
+
+Recibimos en la tarjeta la referencia de la función, y procedemos a usarla si se pasó por las props y si el usuario está pasando el mouse por encima del elemento:
+
+```tsx
+type Props = {
+    ...
+    preFetchProduct?: ( id: number ) => void;
+};
+
+export const ProductCard: FC<Props> = ( { ..., preFetchProduct } ) => {
+    return (
+        <Link ... onMouseEnter={ () => preFetchProduct && preFetchProduct( product.id ) }>
+            ...
+        </Link>
+    );
+};           
+```
