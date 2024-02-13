@@ -1,0 +1,17 @@
+{
+    "name": "fake-backend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "dependencies": {
+        "json-server": "^1.0.0-alpha.23"
+    },
+    "devDependencies": {},
+    "scripts": {
+        "start": "json-server db.json --port 3100",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
+}
