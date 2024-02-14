@@ -13,10 +13,20 @@ type FormInputsType = {
 
 
 export const NewProductPage: FC = () => {
-    const { control, handleSubmit } = useForm<FormInputsType>();
+    const { control, handleSubmit, watch } = useForm<FormInputsType>( {
+        defaultValues: {
+            title: "Teclado",
+            price: 120.2,
+            description: "Lorem, ipsum dolor sit amet consectetur adipisicing elit.Aliquid eligendi, facere reiciendis aspernatur ad est, voluptates animi veniam accusantium maxime velit ducimus aliquam.Fuga ab quod nulla atque autem cum!",
+            category: "men's clothing",
+            image: 'https://images.unsplash.com/photo-1560762484-813fc97650a0?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+        }
+    } );
+
+    const newImage = watch( 'image' );
 
     const onSubmit: SubmitHandler<FormInputsType> = ( data ) => {
-
+        console.table( data );
     };
 
     return (
@@ -31,7 +41,7 @@ export const NewProductPage: FC = () => {
 
 
                         <Controller control={ control } name="price" rules={ { required: true } } render={ ( { field } ) =>
-                            <Input value={ field.value?.toString() } onChange={ field.onChange } className="mt-2" type="number" label="Precio del producto" />
+                            <Input value={ field.value?.toString() } onChange={ e => field.onChange( Number( e.target.value ) ) } className="mt-2" type="number" label="Precio del producto" />
                         } />
 
                         <Controller control={ control } name="image" rules={ { required: true } } render={ ( { field } ) =>
@@ -60,7 +70,7 @@ export const NewProductPage: FC = () => {
                         height: '600px',
                     } }
                     >
-                        <Image src="https://fakestoreapi.com/img/71li-ujtlUL._AC_UX679_.jpg" />
+                        <Image src={ newImage } />
                     </div>
                 </div>
             </form>

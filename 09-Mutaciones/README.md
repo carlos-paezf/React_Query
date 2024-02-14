@@ -104,3 +104,71 @@ export const NewProductPage: FC = () => {
     );
 };
 ```
+
+## Terminar formulario
+
+En esta lección vamos a terminar el formulario y controlar los campos del mismo. Para controlar los campos, vamos a manejar valores por defecto:
+
+```tsx
+export const NewProductPage: FC = () => {
+    const { control, handleSubmit } = useForm<FormInputsType>( {
+        defaultValues: {
+            title: "",
+            price: 0,
+            description: '',
+            category: "men's clothing",
+            image: ''
+        }
+    } );
+    ...
+}
+```
+
+Tenemos un pequeño inconveniente con el dato registrado por el input de número en el precio, ya que está recibiendo un string, cuando en realidad necesitamos un number. Para poder realizar el parseo y evitar errores en la petición al back, vamos a realizar esta breve configuración:
+
+```tsx
+export const NewProductPage: FC = () => {
+    ...
+    return (
+        <div ... >
+            ...
+            <form ... >
+                <div ... >
+                    <div ... >
+                        ...
+                        <Controller ... render={ ( { field } ) =>
+                            <Input value={ field.value?.toString() } ... />
+                        } />
+                        ...
+                    </div>
+                    ...
+                </div>
+            </form>
+        </div>
+    );
+};
+```
+
+Para poder mostrar la imagen basado en la url ingresado por el usuario, podemos usar una función `watch` de React Form Hook, para re-renderizar el componente cada que cambia el valor de la URL de la imagen:
+
+```tsx
+export const NewProductPage: FC = () => {
+    const { ..., watch } = useForm<FormInputsType>( { ... } );
+
+    const newImage = watch( 'image' );
+
+    return (
+        <div ... >
+            ...
+            <form ... >
+                <div ... >
+                    ...
+                    <div ... >
+                        <Image src={ newImage } />
+                    </div>
+                </div>
+            </form>
+        </div>
+    );
+};
+```
